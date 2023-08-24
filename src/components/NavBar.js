@@ -27,16 +27,9 @@ const NavBar = () => {
                     <NavLink 
                         className={styles.NavLink}
                         activeClassName={styles.Active}
-                        to="/signin"
+                        to="/welcome"
                     >
-                        <i class="fa-solid fa-right-to-bracket"></i>Sign In
-                    </NavLink>
-                    <NavLink 
-                        className={styles.NavLink}
-                        activeClassName={styles.Active}
-                        to="/signup"
-                    >
-                        <i class="fa-solid fa-user-plus"></i>Sign Up
+                        <i class="fa-solid fa-right-to-bracket"></i>Welcome
                     </NavLink>
                 </Nav>
             </Navbar.Collapse>
