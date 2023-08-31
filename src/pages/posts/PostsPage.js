@@ -13,45 +13,49 @@ import styles from "../../styles/PostsPage.module.css";
 import { useLocation } from "react-router";
 import { axiosReq } from "../../api/axiosDefaults";
 
-import NoResults from "../../assests/no-results.png";
+import NoResults from "../../assets/no-results.png";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchMoreData } from "../../utils/utils";
 import PopularProfiles from "../profiles/PopularProfiles";
+import { useCurrentUser } from "../../contexts/CurrentUserContext";
 
 function PostsPage({ message, filter = "" }) {
   const [posts, setPosts] = useState({ results: [] });
-  const [hasLoaded, setHasLoadded] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
   const { pathname } = useLocation();
 
   const [query, setQuery] = useState("");
+
+  const currentUser = useCurrentUser();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const { data } = await axiosReq.get(`/posts/?${filter}search=${query}`);
         setPosts(data);
-        setHasLoadded(true);
+        setHasLoaded(true);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
 
-    setHasLoadded(false);
+    setHasLoaded(false);
     const timer = setTimeout(() => {
-        fetchPosts();
-    }, 1000)
+      fetchPosts();
+    }, 1000);
+
     return () => {
-        clearTimeout(timer)
-    }
-  }, [filter, query, pathname]);
+      clearTimeout(timer);
+    };
+  }, [filter, query, pathname, currentUser]);
 
   return (
     <Row className="h-100">
       <Col className="py-2 p-0 p-lg-2" lg={8}>
         <PopularProfiles mobile />
-        <i className={`fa-solid fa-magnifying-glass ${styles.SearchIcon}`} />
+        <i className={`fas fa-search ${styles.SearchIcon}`} />
         <Form
-          className={styles.SerachBar}
+          className={styles.SearchBar}
           onSubmit={(event) => event.preventDefault()}
         >
           <Form.Control
@@ -66,17 +70,15 @@ function PostsPage({ message, filter = "" }) {
         {hasLoaded ? (
           <>
             {posts.results.length ? (
-                <InfiniteScroll 
-                children={
-                    posts.results.map((post) => (
-                        <Post key={post.id} {...post} setPosts={setPosts} />
-                      ))
-                }
+              <InfiniteScroll
+                children={posts.results.map((post) => (
+                  <Post key={post.id} {...post} setPosts={setPosts} />
+                ))}
                 dataLength={posts.results.length}
                 loader={<Asset spinner />}
                 hasMore={!!posts.next}
                 next={() => fetchMoreData(posts, setPosts)}
-            />  
+              />
             ) : (
               <Container className={appStyles.Content}>
                 <Asset src={NoResults} message={message} />
