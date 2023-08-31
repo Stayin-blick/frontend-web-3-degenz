@@ -7,6 +7,7 @@ import { useCurrentUser, useSetCurrentUser } from '../contexts/CurrentUserContex
 import Avatar from './Avatar'
 import axios from "axios";
 import useClickOutsideToggle from '../hooks/useClickOutsideToggle'
+import { removeTokenTimestamp } from '../utils/utils'
 
 const NavBar = () => {
     const currentUser = useCurrentUser();
@@ -18,6 +19,7 @@ const NavBar = () => {
         try {
             await axios.post("dj-rest-auth/logout/");
             setCurrentUser(null);
+            removeTokenTimestamp()
         } catch (err) {
             console.log(err);
         }
@@ -66,13 +68,6 @@ const NavBar = () => {
             to="/liked"
         >
             <i class="fas fa-heart"></i>Liked
-        </NavLink>
-        <NavLink 
-            className={styles.NavLink}
-            activeClassName={styles.Active}
-            to="/followers"
-        >
-            <i className="fas fa-person-circle-plus"/>Followers
         </NavLink>
         <NavLink 
             className={styles.NavLink}
